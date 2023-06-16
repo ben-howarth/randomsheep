@@ -1,8 +1,15 @@
 # Getting Started
 This approach uses a h2 in-memory DB. 
 
-I initially created both a weatherSensor table and a WeatherSensorReading table and their related entities. In the end for the scope of the problem I felt that a single table made more sense but there may still be some hangovers from the two table decision (though I think I've removed them all for the most part). 
+
 I used spring JPA and jakarta for data persistence and retrieval and tried to follow a standard Layer based project structure.
+
+The only metrics that are available are defined in `com.example.demo.domain.MetricType` 
+they are HUMIDITY, TEMPERATURE, WIND_SPEED and UV_INDEX.
+The only statistics that are available are defined in `com.example.demo.domain.StatisticType` 
+they are AVERAGE, MAX, MIN and SUM.
+
+I initially created both a weatherSensor table and a WeatherSensorReading table and their related entities. In the end for the scope of the problem I felt that a single table made more sense but there may still be some hangovers from the two table decision (though I think I've removed them all for the most part). 
 
 ## how to run
 navigate to the root folder and run `./mvnw spring-boot:run` to start the server
