@@ -1,34 +1,40 @@
 package com.example.demo;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "WeatherSensor")
 public class WeatherSensor {
-    private String sensorId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name="sensorType")
     private String sensorType;
-    private double sensorValue;
     
-    public WeatherSensor(String sensorId, String sensorType) {
-        this.sensorId = sensorId;
+    public WeatherSensor() {
+    }
+
+    public WeatherSensor(String sensorType) {
         this.sensorType = sensorType;
-        this.sensorValue = 0.0; // Default sensor value
+    }
+
+    public WeatherSensor(Integer id, String sensorType) {
+        this.id = id;
+        this.sensorType = sensorType;
     }
     
-    public String getSensorId() {
-        return sensorId;
+    public Integer getId() {
+        return id;
     }
     
     public String getSensorType() {
         return sensorType;
-    }
-    
-    public double getSensorValue() {
-        return sensorValue;
-    }
-    
-    public void setSensorValue(double sensorValue) {
-        this.sensorValue = sensorValue;
-    }
-    
-    public void updateSensorValue(double newValue) {
-        this.sensorValue = newValue;
     }
 }
 
