@@ -1,7 +1,8 @@
 package com.example.demo;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,14 +26,15 @@ public class WeatherResource {
     }
 
     @RequestMapping(path = "/getStatistics", method = RequestMethod.GET )
-    public Double getStatisticForWeatherSensor(
-        @RequestParam("id") List<Integer> id,
-        @RequestParam(name = "startDate") Timestamp startDate,
-        @RequestParam(name = "endDate") Timestamp endDate,
-        @RequestParam(name = "statistic") String statistic
+    public Map<MetricType, Double> getStatisticForWeatherSensor(
+        @RequestParam("ids") List<Integer> ids,
+        @RequestParam(name = "dateRange") Integer dateRange,
+        @RequestParam(name = "statistic") String statistic,
+        @RequestParam(name = "statistic") List<String> metrics
         ) {
         StatisticType statisticType = StatisticType.valueOf(statistic);
-        return weatherSensorService.getStatisticsForWeatherSensor(ids, startDate, endDate, statisticType);
+        List<MetricType> metricTypes = metrics.stream().map(metric -> MetricType.valueOf(metric)).toList();
+        return weatherSensorService.getStatisticsByMetric(ids, dateRange, statisticType, metricTypes);
     }
 
 
@@ -48,12 +50,14 @@ public class WeatherResource {
     public WeatherSensorReading createNewReading(
         @RequestParam(name = "sensorId") Integer sensorId,
         @RequestParam(name = "readingValue") double readingValue,
-        @RequestParam(name = "readingDateTime") Timestamp readingDateTime
+        @RequestParam(name = "readingDateTime") LocalDateTime readingDateTime,
+        @RequestParam(name = "metric") String metric
     ) {
         WeatherSensorReading weatherSensorReading = new WeatherSensorReading(
             sensorId,
             readingValue,
-            readingDateTime      
+            readingDateTime, 
+            metric
         );
         return weatherSensorService.createNewReading(weatherSensorReading);
     }

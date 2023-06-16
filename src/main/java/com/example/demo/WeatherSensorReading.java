@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,24 +19,24 @@ public class WeatherSensorReading {
     @Column(name = "sensorId")
     private int sensorId;
 
-    // @ManyToOne
-    // @JoinColumn(name = "sensorId")
-    // private WeatherSensor weatherSensor;
-
     @Column(name = "readingValue")
     private double readingValue;
 
     @Column(name = "readingDateTime")
-    private Timestamp readingDateTime;
+    private LocalDateTime readingDate;
 
-    public WeatherSensorReading() {
-    }
+     @Column(name="readingType")
+    private String readingType;
 
-    public WeatherSensorReading(int sensorId, double readingValue, Timestamp readingDateTime) {
-        // this.weatherSensor = weatherSensor;
+    public WeatherSensorReading(int sensorId, double readingValue, LocalDateTime readingDate,
+            String readingType) {
         this.sensorId = sensorId;
         this.readingValue = readingValue;
-        this.readingDateTime = readingDateTime;
+        this.readingDate = readingDate;
+        this.readingType = readingType;
+    }
+
+    public WeatherSensorReading() {
     }
     
     public int getId() {
@@ -46,14 +46,6 @@ public class WeatherSensorReading {
     public void setId(int id) {
         this.id = id;
     }
-
-    // public WeatherSensor getWeatherSensor() {
-    //     return weatherSensor;
-    // }
-
-    // public void setWeatherSensor(WeatherSensor weatherSensor) {
-    //     this.weatherSensor = weatherSensor;
-    // }
 
     public int getSensorId() {
         return sensorId;
@@ -67,15 +59,23 @@ public class WeatherSensorReading {
         return readingValue;
     }
 
+    public String getReadingType() {
+        return readingType;
+    }
+
+    public void setReadingType(String readingType) {
+        this.readingType = readingType;
+    }
+
     public void setReadingValue(double readingValue) {
         this.readingValue = readingValue;
     }
 
-    public Timestamp getReadingDateTime() {
-        return readingDateTime;
+    public LocalDateTime getReadingDateTime() {
+        return readingDate;
     }
 
-    public void setReadingDateTime(Timestamp readingDateTime) {
-        this.readingDateTime = readingDateTime;
+    public void setReadingDateTime(LocalDateTime readingDate) {
+        this.readingDate = readingDate;
     }
 }

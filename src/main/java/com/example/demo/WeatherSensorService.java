@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -42,67 +42,94 @@ public class WeatherSensorService {
         return weatherSensorReadings;
     }
 
-    public Double getStatisticsForWeatherSensor(
-        List<Integer> ids, Timestamp startDate, Timestamp endDate, StatisticType statisticType
+    public HashMap<MetricType, Double> getStatisticsByMetric(
+        List<Integer> ids, Integer dateRange, StatisticType statisticType, List<MetricType> metricTypes
         ) {
-         switch(statisticType) {
-            case AVERAGE:
-                 return getAverageReadingsForWeatherSensor(ids, startDate, endDate);
-            case MAX:
-                return getMaximumReadingsForWeatherSensor(ids, startDate, endDate);
-            case MIN:
-                return getMinimumReadingsForWeatherSensor(ids, startDate, endDate);
-            case SUM: 
-                return getSumOfReadingsForWeatherSensor(ids, startDate, endDate);
-            default:
-                return 0.0;
-        }
+            HashMap<MetricType, Double> metricResults = new HashMap<MetricType, Double>();
+            for (MetricType metric: metricTypes) {
+                metricResults.put(metric, getStatisticsForWeatherSensor(ids, dateRange, statisticType, metric));
+            }
+            return metricResults;
         
     }
 
-    public Double getAverageReadingsForWeatherSensor(List<Integer> id, Timestamp startDate, Timestamp endDate ) {
-        List<WeatherSensorReading> weatherSensorReadingsInRange = 
-            startDate!=null && endDate!=null ? 
-                getReadingsInDateRange(id, startDate, endDate)
-                : getReadingsInDateRange(id, startDate, endDate);
+    public Double getStatisticsForWeatherSensor(
+        List<Integer> ids, Integer dateRange, StatisticType statisticType, MetricType metricType
+        ) {
+            switch(statisticType) {
+                case AVERAGE:
+                    return getAverageReadings(ids, dateRange, metricType);
+                case MAX:
+                    return getMaximumReadings(ids, dateRange, metricType);
+                case MIN:
+                    return getMinimumReadings(ids, dateRange, metricType);
+                case SUM: 
+                    return getSumOfReadings(ids, dateRange, metricType);
+                default:
+                    return 0.0;
+            }
         
-        Double sum = weatherSensorReadingsInRange.stream()
+    }
+
+    public Double getAverageReadings(List<Integer> id, Integer dateRange, MetricType metricType ) {
+        List<WeatherSensorReading> weatherSensorReadingsForMetric = 
+            getReadingsInDateRange(id, dateRange).stream()
+                .filter(reading ->
+                    MetricType.valueOf(reading.getReadingType()).equals(metricType)
+                ).toList();
+        
+        Double sum = weatherSensorReadingsForMetric.stream()
             .mapToDouble(WeatherSensorReading::getReadingValue)
             .sum();
-        Integer numberOfReadings = weatherSensorReadingsInRange.size();
 
-       return sum/numberOfReadings ;
+        Integer numberOfReadings = weatherSensorReadingsForMetric.size();
+
+        return sum/numberOfReadings ;
     }
 
-    public Double getMaximumReadingsForWeatherSensor(List<Integer> id, Timestamp startDate, Timestamp endDate ) {
-        return getReadingsInDateRange(id, startDate, endDate).stream()
+    public Double getMaximumReadings(List<Integer> id, Integer dateRange, MetricType metricType) {
+        return getReadingsInDateRange(id, dateRange).stream()
+            .filter(reading -> MetricType.valueOf(reading.getReadingType()).equals(metricType))
             .mapToDouble(WeatherSensorReading::getReadingValue)
             .max().getAsDouble();
     }
 
-    public Double getMinimumReadingsForWeatherSensor(List<Integer> id, Timestamp startDate, Timestamp endDate ) {        
-        return getReadingsInDateRange(id, startDate, endDate).stream()
+    public Double getMinimumReadings(List<Integer> id, Integer dateRange, MetricType metricType) {        
+        return getReadingsInDateRange(id, dateRange).stream()
+            .filter(reading -> MetricType.valueOf(reading.getReadingType()).equals(metricType))
             .mapToDouble(WeatherSensorReading::getReadingValue)
             .min().getAsDouble();
     }
 
-    public Double getSumOfReadingsForWeatherSensor(List<Integer> id, Timestamp startDate, Timestamp endDate ) {
-        return getReadingsInDateRange(id, startDate, endDate).stream()
+    public Double getSumOfReadings(List<Integer> id, Integer dateRange, MetricType metricType) {
+        return getReadingsInDateRange(id, dateRange).stream()
+            .filter(reading -> MetricType.valueOf(reading.getReadingType()).equals(metricType))
             .mapToDouble(WeatherSensorReading::getReadingValue)
             .sum();
 
     }
 
-    public List<WeatherSensorReading> getReadingsInDateRange (List<Integer> ids, Timestamp startDate, Timestamp endDate) {
-         List<WeatherSensorReading> weatherSensorReadingsInRange =  weatherSensorReadingDAO.findAllBySensorIds(ids).stream()
+    public List<WeatherSensorReading> getReadingsInDateRange (List<Integer> ids, Integer dateRange) {
+        List<WeatherSensorReading> WeatherSensorReadings = weatherSensorReadingDAO.findAllBySensorIdIn(ids);
+        Integer dateRangeOrDefault = dateRange== null ? 1 : dateRange; // use only the most recent days readings if date range is null
+        List<WeatherSensorReading> weatherSensorReadingsInRange =  WeatherSensorReadings.stream()
             .filter(reading -> 
-                reading.getReadingDateTime().compareTo(startDate) >= 0 
-                && reading.getReadingDateTime().compareTo(endDate) <= 0 
+                reading.getReadingDateTime().compareTo(reading.getReadingDateTime().minusDays(dateRangeOrDefault)) >= 0 
             ).toList();
-            Timestamp.
+            
        if (weatherSensorReadingsInRange == null || weatherSensorReadingsInRange.isEmpty()) {
             throw new IllegalArgumentException("No readings exist for this sensor in this time range.");
         }
+
+        List<WeatherSensorReading> weatherSensorReadingsForMetric =  WeatherSensorReadings.stream()
+            .filter(reading -> 
+                reading.getReadingDateTime().compareTo(reading.getReadingDateTime().minusDays(dateRangeOrDefault)) >= 0 
+            ).toList();
+            
+       if (weatherSensorReadingsForMetric == null || weatherSensorReadingsForMetric.isEmpty()) {
+            throw new IllegalArgumentException("No readings exist for the metrics provided for sensor in this time range.");
+        }
+
         return weatherSensorReadingsInRange;
     }
 

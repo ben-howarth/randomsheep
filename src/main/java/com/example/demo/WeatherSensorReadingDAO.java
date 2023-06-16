@@ -9,5 +9,5 @@ public interface WeatherSensorReadingDAO extends JpaRepository<WeatherSensorRead
 
     List<WeatherSensorReading> findAllBySensorId(Integer sensorId);
 
-    List<WeatherSensorReading> findAllBySensorIds(List<Integer> sensorId);
+    List<WeatherSensorReading> findAllBySensorIdIn(List<Integer> sensorId);
 }
