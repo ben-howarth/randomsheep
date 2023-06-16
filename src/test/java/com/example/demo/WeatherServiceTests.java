@@ -4,12 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.geo.Metric;
+import com.example.demo.domain.MetricType;
+import com.example.demo.domain.StatisticType;
+import com.example.demo.domain.WeatherSensorReading;
+import com.example.demo.repositories.WeatherSensorReadingDAO;
+import com.example.demo.services.WeatherSensorService;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class WeatherServiceTests {
 
-
-    @Mock
-    private WeatherSensorDAO weatherSensorDAO;
     @Mock
     private WeatherSensorReadingDAO weatherSensorReadingDAO;
 

@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.domain;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +25,7 @@ public class WeatherSensorReading {
     @Column(name = "readingDateTime")
     private LocalDateTime readingDate;
 
-     @Column(name="readingType")
+    @Column(name="readingType")
     private String readingType;
 
     public WeatherSensorReading(int sensorId, double readingValue, LocalDateTime readingDate,

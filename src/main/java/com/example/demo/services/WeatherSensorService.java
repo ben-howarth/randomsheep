@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.services;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,35 +6,22 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import com.example.demo.domain.MetricType;
+import com.example.demo.domain.StatisticType;
+import com.example.demo.domain.WeatherSensorReading;
+import com.example.demo.repositories.WeatherSensorReadingDAO;
 
 @Service
 public class WeatherSensorService {
 
     @Autowired
-    WeatherSensorDAO weatherSensorDAO;
-
-    @Autowired
     WeatherSensorReadingDAO weatherSensorReadingDAO;
-
-    public WeatherSensor getWeatherSensorById(
-        @PathVariable("id") Integer id) {
-        return weatherSensorDAO.findById(id).get();
-    }
-
-    public WeatherSensor createNewSensor(WeatherSensor weatherSensor) {
-        return weatherSensorDAO.save(weatherSensor);
-    }
 
     public WeatherSensorReading createNewReading(
          WeatherSensorReading weatherSensorReading
     ) {
         return weatherSensorReadingDAO.save(weatherSensorReading);
-    }
-    
-    public List<WeatherSensor> getAllWeatherSensors() {
-        List<WeatherSensor> weatherSensors = StreamSupport.stream(weatherSensorDAO.findAll().spliterator(), false).toList();
-        return weatherSensors;
     }
 
     public List<WeatherSensorReading> getAllWeatherSensorReadings() {

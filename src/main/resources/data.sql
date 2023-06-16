@@ -1,8 +1,3 @@
-INSERT INTO WeatherSensor(sensorType) VALUES ('Temperature');
-INSERT INTO WeatherSensor( sensorType) VALUES ('Temperature');
-INSERT INTO WeatherSensor( sensorType) VALUES ('HUMIDITY');
-INSERT INTO WeatherSensor( sensorType) VALUES ('WindSpeed');
-
 INSERT INTO WeatherSensorReading (sensorId, readingValue, readingDateTime, readingType) VALUES (1, 15.5, '2023-06-15 10:00:00', 'TEMPERATURE');
 INSERT INTO WeatherSensorReading (sensorId, readingValue, readingDateTime, readingType) VALUES (2, 18.2, '2023-06-15 10:05:00', 'TEMPERATURE');
 INSERT INTO WeatherSensorReading (sensorId, readingValue, readingDateTime, readingType) VALUES (3, 100.3, '2023-06-15 10:10:00', 'HUMIDITY');
